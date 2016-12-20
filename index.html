@@ -1,0 +1,126 @@
+<!-- consider using d3 -->
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>simply...a game</title>
+	<script type="text/javascript" src="jquery-2.1.3.min.js"></script>
+</head>
+<body>
+<canvas id="game">
+	
+</canvas>
+</body>
+
+<script type="text/javascript">
+
+	var ctx;
+	var canvasW;
+	var canvasH;
+
+	var playerX;
+	var playerY;
+
+	var playerW;
+	var playerH;
+
+	$(document).ready(function(){
+		init();
+	});
+
+	function init()
+	{
+		var canvas = $("#game")[0];
+	    
+	    canvas.width = window.innerWidth;
+		canvas.height = window.innerHeight;
+	    canvasW = canvas.width;
+	    canvasH = canvas.height;
+
+	    playerH = 50;
+	    playerW = 50;
+
+	    if( canvas.getContext )
+	    {
+	    	ctx = canvas.getContext('2d');
+	    	drawBackground();
+	    	$("#game").mousemove(move);
+	        // setInterval( run , 33 );
+	    }
+	}
+
+	function move(event){
+		ctx.clearRect(0, 0, canvasW, canvasH);
+		playerX = event.pageX;
+	    playerY = event.pageY;
+
+		drawBackground();
+		drawPlayer();
+	}
+
+	function drawBackground () {
+		var recW = 200;
+		var recH = 100;
+
+		var cornersX = [0, canvasW, 0, canvasW];
+		var cornersY = [0, 0, canvasH, canvasH];
+
+		var recX = [canvasW/2-recW/2, canvasW/2+recW/2, canvasW/2-recW/2, canvasW/2+recW/2];
+		var recY = [3*canvasH/4-recH/2, 3*canvasH/4-recH/2, 3*canvasH/4+recH/2, 3*canvasH/4+recH/2];
+		ctx.lineWidth = 1;
+		for (var i = 0; i < 4; i++) {
+			ctx.beginPath();
+			ctx.moveTo(cornersX[i], cornersY[i]);
+			ctx.lineTo(recX[i], recY[i]);
+			ctx.stroke();
+		};
+		ctx.rect(recX[0], recY[0], recW, recH);
+		ctx.stroke();
+		ctx.closePath();
+	}
+
+	function drawPlayer () {
+		var part = getPart();
+		if(part == 'none'){
+			return;
+		}
+		draw[part]();
+	}
+
+	function getPart () {
+		if(playerX < 50){
+			return 'left';
+		}
+		else if(playerX > canvasW - 50){
+			return 'right';
+		}
+		else if(playerY < 50){
+			return 'top';
+		}
+		else if(playerY > canvasH - 50){
+			return 'bottom';
+		}
+		else{
+			return 'none';
+		}
+	}
+
+	var draw = {
+	    left: function() { console.log("left"); },
+	    right: function() { console.log("right"); },
+	    top: function() { console.log("top"); },
+	    bottom: function() { 
+	    	ctx.beginPath();
+	    	ctx.rect(playerX-playerW/2, playerY-playerH/2, playerW, playerH);
+	    	ctx.fill();
+	    }
+	};
+
+</script>
+
+<style type="text/css">
+	html, body {
+    	overflow: hidden;
+	}
+</style>
+</html>
